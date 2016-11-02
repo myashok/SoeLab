@@ -39,9 +39,7 @@ public class Lab8 {
         // TODO code application logic here
         breakIntoValues();
         calculateCriticalPath();
-        for(HashMap.Entry<String, Integer> entry: mapcompletionTime.entrySet()) {
-            System.out.println(entry.getKey()+ " "+ entry.getValue());
-        }
+        printPath();
     }
     
     private static void calculateCriticalPath() {
@@ -65,16 +63,17 @@ public class Lab8 {
             for(int i = 0; i < list.size(); ++i) {
                 if(max < mapcompletionTime.get(list.get(i))) {
                     max = mapcompletionTime.get(list.get(i));
-                    end = 
-                }
-                
+                    end = list.get(i);
+                }                
             }
+            path.put(end, true);
         }
     }
 
     private static void helperCalculateCompletionTime(String temp) {
           if(mapPredecessor.get(temp).get(0).equals("-")) {
               mapcompletionTime.put(temp, mapTime.get(temp));
+         //     System.out.println(temp + " " + mapTime.get(temp));
               return;
           }
           else if(mapcompletionTime.containsKey(temp))
@@ -83,9 +82,27 @@ public class Lab8 {
           int max = 0;
           for(int i = 0; i < arrList.size(); ++i) {
               helperCalculateCompletionTime(arrList.get(i));
-              max = Math.max(Integer.MIN_VALUE, mapcompletionTime.get(arrList.get(i)));              
+              if(max < mapcompletionTime.get(arrList.get(i))) {
+                  max =  mapcompletionTime.get(arrList.get(i));
+              }              
           }
-          mapcompletionTime.put(temp, max+mapTime.get(temp));
+          mapcompletionTime.put(temp, max + mapTime.get(temp));
+       //   System.out.println(temp + " " + mapcompletionTime.get(temp));
+    }
+
+    private static void printPath() {
+     //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Activity     "+"Start Time    "+"Completion Time    " + "CriticalPath");
+        for(HashMap.Entry<String, Integer> entry: mapcompletionTime.entrySet()) {
+           String activity = entry.getKey();
+           Integer comTime = entry.getValue();
+           Integer startTime = entry.getValue() - mapTime.get(entry.getKey());
+           String criticalPath = "";
+           if(path.containsKey(entry.getKey())) {
+               criticalPath = "*";
+           }
+           System.out.printf("  %-12s%-16d%-16d%10s\n", activity, startTime, comTime, criticalPath);
+        }
     }
     
 }
